@@ -1,0 +1,34 @@
+name: pipeline
+
+on: [push, pull_request]
+
+jobs:
+  pipeline:
+    name: pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.x.x
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "17"
+          cache: "pnpm"
+
+      - name: Install and build
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: |
+          pnpm format
+          pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test

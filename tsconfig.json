@@ -1,0 +1,7 @@
+{
+  "extends": "@sondr3/tsconfig",
+  "compilerOptions": {
+    "incremental": true,
+    "outDir": "dist"
+  }
+}
