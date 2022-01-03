@@ -4,10 +4,11 @@
   "description": "A very small test runner",
   "type": "module",
   "bin": {
-    "mt": "dist/bin.js"
+    "mt": "bin/mt.mjs"
   },
   "main": "dist/index.js",
   "files": [
+    "bin/**/*",
     "dist/**/*.js",
     "dist/**/*.d.ts",
     "lib/**/*.ts"
@@ -15,9 +16,9 @@
   "scripts": {
     "dev": "tsc --watch --incremental",
     "build": "tsc",
-    "test": "node dist/bin.js",
-    "format": "prettier --check lib",
-    "format:fix": "prettier --write lib",
+    "test": "node bin/mt.mjs",
+    "format": "prettier --check lib bin",
+    "format:fix": "prettier --write lib bin",
     "lint": "eslint --cache lib",
     "lint:fix": "eslint --cache --fix lib"
   },

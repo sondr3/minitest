@@ -1,11 +1,9 @@
-#!/usr/bin/env node
-
 import { promises as fs } from "node:fs";
 import { basename, join } from "node:path";
 import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 
-import { Test } from "./index.js";
+import { Test } from "./test_fn.js";
 
 const USE_COLORS = process.env["NO_COLOR"] !== undefined;
 
@@ -57,22 +55,6 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
   }
 }
 
-async function run({ dir, quiet }: CliOptions): Promise<void> {
-  if ((await fs.stat(dir)).isFile()) {
-    await import(pathToFileURL(dir).toString());
-    tests.set(dir, tests.get("unnamed") ?? []);
-    tests.delete("unnamed");
-  }
-
-  for await (const file of walkDir(dir)) {
-    await import(pathToFileURL(file).toString());
-    tests.set(file, tests.get("unnamed") ?? []);
-    tests.delete("unnamed");
-  }
-
-  report(quiet);
-}
-
 function report(quiet: boolean): void {
   const count = Array.from(tests.values()).reduce((prev, it) => prev + it.length, 0);
   process.stdout.write(`running ${count} ${count === 1 ? "test" : "tests"}\n`);
@@ -108,7 +90,7 @@ function results(): { ok: number; failed: number; ignored: number } {
   return res;
 }
 
-function parseCli(argv: Array<string>): CliOptions {
+export function parseCli(argv: Array<string>): CliOptions {
   const options: CliOptions = {
     ...defaultOptions,
   };
@@ -138,4 +120,18 @@ function parseCli(argv: Array<string>): CliOptions {
   return options;
 }
 
-void run(parseCli(process.argv));
+export async function run({ dir, quiet }: CliOptions): Promise<void> {
+  if ((await fs.stat(dir)).isFile()) {
+    await import(pathToFileURL(dir).toString());
+    tests.set(dir, tests.get("unnamed") ?? []);
+    tests.delete("unnamed");
+  }
+
+  for await (const file of walkDir(dir)) {
+    await import(pathToFileURL(file).toString());
+    tests.set(file, tests.get("unnamed") ?? []);
+    tests.delete("unnamed");
+  }
+
+  report(quiet);
+}
