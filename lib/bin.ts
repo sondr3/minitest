@@ -2,6 +2,7 @@
 
 import { promises as fs } from "node:fs";
 import { basename, join } from "node:path";
+import { pathToFileURL } from "node:url";
 
 interface CliOptions {
   dir: string;
@@ -22,8 +23,8 @@ const ignoreDir = (dir: string): boolean => {
   return false;
 };
 
-const ignoreFile = (file: string): boolean => {
-  return basename(file) !== "test.js" || !file.endsWith(".test.js");
+const testFile = (file: string): boolean => {
+  return basename(file) === "test.js" || file.endsWith(".test.js");
 };
 
 async function* walkDir(dir: string): AsyncGenerator<string> {
@@ -32,19 +33,30 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
 
     if (d.isDirectory() && !ignoreDir(d.name)) {
       yield* walkDir(entry);
-    } else if (d.isFile() && !ignoreFile(entry)) {
+    } else if (d.isFile() && testFile(entry)) {
       yield entry;
     }
   }
 }
 
-async function run({ dir }: CliOptions): Promise<void> {
+async function runTest(file: string, quiet = false): Promise<void> {
+  try {
+    await import(pathToFileURL(file).toString());
+  } catch (e) {
+    if (!quiet) {
+      console.error(e instanceof Error ? e.stack : e);
+    }
+    process.exit(1);
+  }
+}
+
+async function run({ dir, quiet }: CliOptions): Promise<void> {
   if ((await fs.stat(dir)).isFile()) {
-    console.log("running file");
+    await runTest(dir, quiet);
   }
 
   for await (const file of walkDir(dir)) {
-    console.log(file);
+    await runTest(file, quiet);
   }
 }
 

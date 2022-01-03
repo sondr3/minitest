@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "tsc --watch --incremental",
     "build": "tsc",
-    "test": "test",
+    "test": "node dist/bin.js",
     "format": "prettier --check lib",
     "format:fix": "prettier --write lib",
     "lint": "eslint --cache lib",
