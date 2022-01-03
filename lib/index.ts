@@ -1,3 +1,9 @@
+const tests: Array<TestDefinition> = [];
+
+export const readTests = () => {
+  return tests.splice(0);
+};
+
 export interface TestDefinition {
   name: string;
   fn: TestFn;
@@ -9,41 +15,46 @@ type TestFn = () => void | Promise<void>;
 type TestNoFn = Omit<TestDefinition, "fn">;
 type TestOptions = Pick<TestDefinition, "ignore" | "only">;
 
-const defaultOptions: TestOptions = {
-  ignore: false,
-  only: false,
-};
+class Test {
+  readonly name!: string;
+  readonly fn: TestFn;
+  readonly ignore: boolean = false;
+  readonly only: boolean = false;
 
-export function test(fn: TestFn): void;
-export function test(opts: TestNoFn, fn: TestFn): void;
+  constructor(fnNameOrOpts: TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions) {
+    if (typeof fnNameOrOpts === "function") {
+      const name = fnNameOrOpts.name === "" ? "unnamed" : fnNameOrOpts.name;
+      this.name = name;
+      this.fn = fnNameOrOpts;
+      Object.assign(this, opts);
+    } else if (typeof fnNameOrOpts === "string") {
+      if (!fn || typeof fn !== "function") {
+        throw new Error("Test is missing function");
+      }
 
-export function test(name: string, fn: TestFn): void;
-export function test(name: string, fn: TestFn, options?: TestOptions): void;
+      this.name = fnNameOrOpts;
+      this.fn = fn;
+      Object.assign(this, opts);
+    } else if (typeof fnNameOrOpts === "object") {
+      if (!fnNameOrOpts.name) {
+        throw new Error("Test must have a name");
+      }
+      if (!fn || typeof fn !== "function") {
+        throw new Error("Test is missing function");
+      }
 
-export function test(fnNameOrOpts: TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions): void {
-  let test;
-
-  if (typeof fnNameOrOpts === "function") {
-    const name = fnNameOrOpts.name === "" ? "unnamed" : fnNameOrOpts.name;
-    test = { fn: fnNameOrOpts, name: name, ...defaultOptions, ...opts };
-  } else if (typeof fnNameOrOpts === "string") {
-    if (!fn || typeof fn !== "function") {
-      throw new Error("Test is missing function");
+      this.fn = fn;
+      Object.assign(this, fnNameOrOpts);
+    } else {
+      throw new Error("Misformed test definition");
     }
-
-    test = { name: fnNameOrOpts, fn: fn, ...defaultOptions, ...opts };
-  } else if (typeof fnNameOrOpts === "object") {
-    if (!fnNameOrOpts.name) {
-      throw new Error("Test must have a name");
-    }
-    if (!fn || typeof fn !== "function") {
-      throw new Error("Test is missing function");
-    }
-
-    test = { fn: fn, ...defaultOptions, ...fnNameOrOpts };
-  } else {
-    throw new Error("Misformed test definition");
   }
+}
 
-  void test.fn();
+export function test(fn: TestFn): Test;
+export function test(opts: TestNoFn, fn: TestFn): Test;
+export function test(name: string, fn: TestFn): Test;
+export function test(name: string, fn: TestFn, options?: TestOptions): Test;
+export function test(fnNameOrOpts: TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions): Test {
+  return new Test(fnNameOrOpts, fn, opts);
 }
