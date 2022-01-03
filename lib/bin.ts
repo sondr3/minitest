@@ -7,6 +7,19 @@ import { pathToFileURL } from "node:url";
 
 import { Test } from "./index.js";
 
+const USE_COLORS = process.env["NO_COLOR"] !== undefined;
+
+const colors = {
+  reset: 0,
+  red: 31,
+  green: 32,
+  yellow: 33,
+};
+
+export const color = (str: string, color: "red" | "green" | "yellow") => {
+  return USE_COLORS ? str : `\x1b[${colors[color]}m${str}\x1b[${colors.reset}m`;
+};
+
 export const tests: Map<string, Array<Test>> = new Map();
 
 interface CliOptions {
@@ -72,10 +85,11 @@ function report(quiet: boolean): void {
 
   const { ok, failed, ignored } = results();
 
+  const success = failed > 0 ? color("FAILED", "red") : color("ok", "green");
+  const time = performance.now().toFixed(0);
+
   process.stdout.write(
-    `\ntest result: ok. ${ok} passed; ${failed} failed; ${ignored} ignored; 0 filtered out; finished in ${performance
-      .now()
-      .toFixed(0)}ms\n\n`,
+    `\ntest result: ${success}. ${ok} passed; ${failed} failed; ${ignored} ignored; 0 filtered out; finished in ${time}ms\n\n`,
   );
 
   if (failed > 0) {

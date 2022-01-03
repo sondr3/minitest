@@ -1,4 +1,4 @@
-import { tests } from "./bin.js";
+import { color, tests } from "./bin.js";
 
 export interface TestDefinition {
   name: string;
@@ -69,13 +69,13 @@ export class Test {
 
   result(quiet = false): void {
     if (this.ignore) {
-      this.report("i", "ignored", quiet);
+      this.report("i", color("ignored", "yellow"), quiet);
     }
 
     if (this.success) {
-      this.report(".", "ok", quiet);
+      this.report(".", color("ok", "green"), quiet);
     } else {
-      this.report("F", "FAILED", quiet);
+      this.report("F", color("FAILED", "red"), quiet);
       if (this.error?.stack) {
         process.stderr.write(`\n\n${this.error?.stack}\n`);
       } else if (this.error) {
