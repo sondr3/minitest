@@ -2,8 +2,15 @@
   "name": "@sondr3/minitest",
   "version": "0.1.0",
   "description": "A very small test runner",
+  "bin": {
+    "mt": "dist/bin.js"
+  },
   "main": "dist/index.js",
-  "bin": "dist/bin.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "lib/**/*.ts"
+  ],
   "scripts": {
     "dev": "tsc --watch --incremental",
     "build": "tsc",
