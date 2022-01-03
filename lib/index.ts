@@ -1,8 +1,4 @@
-const tests: Array<TestDefinition> = [];
-
-export const readTests = () => {
-  return tests.splice(0);
-};
+import { tests } from "./bin.js";
 
 export interface TestDefinition {
   name: string;
@@ -15,11 +11,13 @@ type TestFn = () => void | Promise<void>;
 type TestNoFn = Omit<TestDefinition, "fn">;
 type TestOptions = Pick<TestDefinition, "ignore" | "only">;
 
-class Test {
+export class Test {
   readonly name!: string;
   readonly fn: TestFn;
   readonly ignore: boolean = false;
   readonly only: boolean = false;
+  success = false;
+  error?: Error = undefined;
 
   constructor(fnNameOrOpts: TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions) {
     if (typeof fnNameOrOpts === "function") {
@@ -47,6 +45,50 @@ class Test {
       Object.assign(this, fnNameOrOpts);
     } else {
       throw new Error("Misformed test definition");
+    }
+
+    if (!this.ignore) void this.run();
+
+    if (!tests.get("unnamed")) tests.set("unnamed", []);
+    tests.get("unnamed")?.push(this);
+  }
+
+  private run(): void {
+    if (this.ignore) {
+      this.success = true;
+    }
+
+    try {
+      void this.fn();
+      this.success = true;
+    } catch (e) {
+      this.success = false;
+      this.error = e instanceof Error ? e : undefined;
+    }
+  }
+
+  result(quiet = false): void {
+    if (this.ignore) {
+      this.report("i", "ignored", quiet);
+    }
+
+    if (this.success) {
+      this.report(".", "ok", quiet);
+    } else {
+      this.report("F", "FAILED", quiet);
+      if (this.error?.stack) {
+        process.stderr.write(`\n\n${this.error?.stack}\n`);
+      } else if (this.error) {
+        process.stderr.write(`\n\n${this.error.message}\n`);
+      }
+    }
+  }
+
+  private report(short: string, long: string, quiet: boolean) {
+    if (quiet) {
+      process.stdout.write(`${short}`);
+    } else {
+      process.stdout.write(`test  ${this.name} ... ${long}\n`);
     }
   }
 }
