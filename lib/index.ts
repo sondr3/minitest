@@ -20,11 +20,7 @@ export function test(opts: TestNoFn, fn: TestFn): void;
 export function test(name: string, fn: TestFn): void;
 export function test(name: string, fn: TestFn, options?: TestOptions): void;
 
-export function test(
-  fnNameOrOpts: TestFn | TestNoFn | string,
-  fn?: TestFn,
-  opts?: TestOptions
-): void {
+export function test(fnNameOrOpts: TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions): void {
   let test;
 
   if (typeof fnNameOrOpts === "function") {
