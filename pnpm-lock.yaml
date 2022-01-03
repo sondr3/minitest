@@ -2,7 +2,6 @@ lockfileVersion: 5.3
 
 specifiers:
   '@sondr3/eslint-config': 0.7.1
-  '@sondr3/prettier': 0.5.1
   '@sondr3/tsconfig': 0.7.0
   '@types/node': 17.0.6
   '@typescript-eslint/eslint-plugin': 5.8.1
@@ -20,7 +19,6 @@ specifiers:
 
 devDependencies:
   '@sondr3/eslint-config': 0.7.1_058432f16388878139fcb1569f86d9be
-  '@sondr3/prettier': 0.5.1_prettier@2.5.1
   '@sondr3/tsconfig': 0.7.0
   '@types/node': 17.0.6
   '@typescript-eslint/eslint-plugin': 5.8.1_13039593e64cd539d0b4c5c2da390958
@@ -180,14 +178,6 @@ packages:
       eslint-plugin-simple-import-sort: 7.0.0_eslint@8.6.0
       eslint-plugin-tsdoc: 0.2.14
       prettier-eslint: 13.0.0
-    dev: true
-
-  /@sondr3/prettier/0.5.1_prettier@2.5.1:
-    resolution: {integrity: sha512-Yk45ixyzfACfPfxYArXrpBAuqWRk8KujiyrANKnQyqlvDaW1gaN1XHvk620UGGvM1vrPMldyE7R+LduEteH8Iw==}
-    peerDependencies:
-      prettier: ^2.0
-    dependencies:
-      prettier: 2.5.1
     dev: true
 
   /@sondr3/tsconfig/0.7.0:
