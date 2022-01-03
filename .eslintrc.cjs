@@ -11,4 +11,13 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
+  rules: {
+    "no-redeclare": "off",
+    "@typescript-eslint/no-redeclare": [
+      "error",
+      {
+        ignoreDeclarationMerge: true,
+      },
+    ],
+  },
 };

@@ -2,6 +2,7 @@
   "name": "@sondr3/minitest",
   "version": "0.1.0",
   "description": "A very small test runner",
+  "type": "module",
   "bin": {
     "mt": "dist/bin.js"
   },
