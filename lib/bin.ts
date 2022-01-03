@@ -2,11 +2,16 @@
 
 import { promises as fs } from "node:fs";
 import { basename, join } from "node:path";
+import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
+
+import { Test } from "./index.js";
+
+export const tests: Map<string, Array<Test>> = new Map();
 
 interface CliOptions {
   dir: string;
-  quiet?: boolean;
+  quiet: boolean;
   filter?: (name: string) => boolean;
 }
 
@@ -39,25 +44,54 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
   }
 }
 
-async function runTest(file: string, quiet = false): Promise<void> {
-  try {
+async function run({ dir, quiet }: CliOptions): Promise<void> {
+  if ((await fs.stat(dir)).isFile()) {
+    await import(pathToFileURL(dir).toString());
+    tests.set(dir, tests.get("unnamed") ?? []);
+    tests.delete("unnamed");
+  }
+
+  for await (const file of walkDir(dir)) {
     await import(pathToFileURL(file).toString());
-  } catch (e) {
+    tests.set(file, tests.get("unnamed") ?? []);
+    tests.delete("unnamed");
+  }
+
+  report(quiet);
+}
+
+function report(quiet: boolean): void {
+  const count = Array.from(tests.values()).reduce((prev, it) => prev + it.length, 0);
+  process.stdout.write(`running ${count} ${count === 1 ? "test" : "tests"}\n`);
+  for (const [file, xs] of tests.entries()) {
     if (!quiet) {
-      console.error(e instanceof Error ? e.stack : e);
+      process.stdout.write(`running ${xs.length} ${xs.length === 1 ? "test" : "tests"} in ${file}\n`);
     }
+    xs.forEach((test) => test.result(quiet));
+  }
+
+  const { ok, failed, ignored } = results();
+
+  process.stdout.write(
+    `\ntest result: ok. ${ok} passed; ${failed} failed; ${ignored} ignored; 0 filtered out; finished in ${performance
+      .now()
+      .toFixed(0)}ms\n\n`,
+  );
+
+  if (failed > 0) {
     process.exit(1);
   }
 }
 
-async function run({ dir, quiet }: CliOptions): Promise<void> {
-  if ((await fs.stat(dir)).isFile()) {
-    await runTest(dir, quiet);
+function results(): { ok: number; failed: number; ignored: number } {
+  const res = { ok: 0, failed: 0, ignored: 0 };
+  for (const val of tests.values()) {
+    res.ignored += val.filter((t) => t.ignore).length;
+    res.ok += val.filter((t) => t.success).length;
+    res.failed += val.length - res.ok;
   }
 
-  for await (const file of walkDir(dir)) {
-    await runTest(file, quiet);
-  }
+  return res;
 }
 
 function parseCli(argv: Array<string>): CliOptions {
