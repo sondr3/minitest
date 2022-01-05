@@ -1,4 +1,5 @@
-import { color, tests } from "./runner.js";
+import { tests } from "./runner.js";
+import { color } from "./utils.js";
 
 export interface TestDefinition {
   name: string;

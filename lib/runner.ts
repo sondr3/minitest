@@ -5,19 +5,7 @@ import { pathToFileURL } from "node:url";
 
 import { parseCli } from "./cli.js";
 import { Test } from "./test_fn.js";
-
-const USE_COLORS = process.env["NO_COLOR"] !== undefined;
-
-const colors = {
-  reset: 0,
-  red: 31,
-  green: 32,
-  yellow: 33,
-};
-
-export const color = (str: string, color: "red" | "green" | "yellow") => {
-  return USE_COLORS ? str : `\x1b[${colors[color]}m${str}\x1b[${colors.reset}m`;
-};
+import { color } from "./utils.js";
 
 export const tests: Map<string, Array<Test>> = new Map();
 
