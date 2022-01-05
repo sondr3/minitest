@@ -8,7 +8,7 @@ interface CliOptions {
   filter?: (name: string) => boolean;
 }
 
-const defaultOptions: CliOptions = {
+export const defaultOptions: CliOptions = {
   dir: ".",
   help: false,
   version: false,
@@ -44,32 +44,51 @@ const printVersionHelp = (version: boolean, help: boolean) => {
   }
 };
 
+export const parseOptions = (args: Array<string>, options: CliOptions): CliOptions => {
+  if (args.length === 0) return options;
+
+  if (args[0].startsWith("-")) {
+    switch (args[0]) {
+      case "-q":
+      case "--quiet":
+        options.quiet = true;
+        return parseOptions(args.slice(1), options);
+      case "-v":
+      case "--version":
+        options.version = true;
+        return options;
+      case "-h":
+      case "--help":
+        options.help = true;
+        return options;
+      case "-f":
+      case "--filter": {
+        const index = args.findIndex((arg) => arg === "-f" || arg === "--filter");
+        if (index + 1 >= args.length) {
+          throw new Error("Missing filter string");
+        }
+
+        const filter = args[index + 1];
+        if (filter.startsWith("/") && filter.endsWith("/")) {
+          const regex = new RegExp(filter.slice(1, filter.length - 1));
+          options.filter = (name: string) => regex.test(name);
+        } else {
+          options.filter = (name: string) => filter.includes(name);
+        }
+        return parseOptions(args.slice(2), options);
+      }
+      default:
+        return options;
+    }
+  } else {
+    options.dir = args[0];
+    return parseOptions(args.slice(1), options);
+  }
+};
+
 export const parseCli = (argv: Array<string>): CliOptions => {
   const args = argv.slice(2);
-  const options: CliOptions = defaultOptions;
-
-  if (args.length > 0) {
-    options.dir = args[0];
-  }
-
-  options.help = args.includes("-h") || args.includes("--help");
-  options.version = args.includes("-v") || args.includes("--version");
-  options.quiet = args.includes("-q") || args.includes("--quiet");
-
-  if (args.includes("-f") || args.includes("--filter")) {
-    const index = args.findIndex((arg) => arg === "-f" || arg === "--filter");
-    if (index + 1 >= args.length) {
-      throw new Error("Missing filter string");
-    }
-
-    const filter = args[index + 1];
-    if (filter.startsWith("/") && filter.endsWith("/")) {
-      const regex = new RegExp(filter.slice(1, filter.length - 1));
-      options.filter = (name: string) => regex.test(name);
-    } else {
-      options.filter = (name: string) => filter.includes(name);
-    }
-  }
+  const options = parseOptions(args, defaultOptions);
 
   if (options.version || options.help) {
     printVersionHelp(options.version, options.help);
