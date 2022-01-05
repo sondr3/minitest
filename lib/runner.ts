@@ -81,16 +81,17 @@ function results(): { ok: number; failed: number; ignored: number } {
 
 export async function run(argv: Array<string>): Promise<void> {
   const { dir, quiet } = parseCli(argv);
+
   if ((await fs.stat(dir)).isFile()) {
     await import(pathToFileURL(dir).toString());
     tests.set(dir, tests.get("unnamed") ?? []);
     tests.delete("unnamed");
-  }
-
-  for await (const file of walkDir(dir)) {
-    await import(pathToFileURL(file).toString());
-    tests.set(file, tests.get("unnamed") ?? []);
-    tests.delete("unnamed");
+  } else {
+    for await (const file of walkDir(dir)) {
+      await import(pathToFileURL(file).toString());
+      tests.set(file, tests.get("unnamed") ?? []);
+      tests.delete("unnamed");
+    }
   }
 
   report(quiet);
