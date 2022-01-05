@@ -21,16 +21,8 @@ export const color = (str: string, color: "red" | "green" | "yellow") => {
 
 export const tests: Map<string, Array<Test>> = new Map();
 
-const ignoreDir = (dir: string): boolean => {
-  if (dir === "node_modules") return true;
-  else if (dir.startsWith(".")) return true;
-
-  return false;
-};
-
-const testFile = (file: string): boolean => {
-  return basename(file) === "test.js" || file.endsWith(".test.js");
-};
+const ignoreDir = (dir: string): boolean => dir === "node_modules" || dir.startsWith(".");
+const testFile = (file: string): boolean => basename(file) === "test.js" || file.endsWith(".test.js");
 
 async function* walkDir(dir: string): AsyncGenerator<string> {
   for await (const d of await fs.opendir(dir)) {
@@ -69,14 +61,14 @@ function report(quiet: boolean): void {
 }
 
 function results(): { ok: number; failed: number; ignored: number } {
-  const res = { ok: 0, failed: 0, ignored: 0 };
-  for (const val of tests.values()) {
-    res.ignored += val.filter((t) => t.ignore).length;
-    res.ok += val.filter((t) => t.success).length;
-    res.failed += val.length - res.ok;
-  }
+  const start = { ok: 0, failed: 0, ignored: 0 };
+  return Array.from(tests.values()).reduce((prev, cur) => {
+    prev.ignored += cur.filter((t) => t.ignore).length;
+    prev.ok += cur.filter((t) => t.success).length;
+    prev.failed += cur.filter((t) => !t.success).length;
 
-  return res;
+    return prev;
+  }, start);
 }
 
 export async function run(argv: Array<string>): Promise<void> {
