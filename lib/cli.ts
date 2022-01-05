@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 
-interface CliOptions {
+export interface CliOptions {
   dir: string;
   help: boolean;
   version: boolean;
