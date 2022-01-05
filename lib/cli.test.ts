@@ -4,7 +4,7 @@ import { defaultOptions, parseOptions } from "./cli.js";
 import { test } from "./index.js";
 
 test("CLI without options", () => {
-  const options = parseOptions([], defaultOptions);
+  const options = parseOptions([], { ...defaultOptions });
 
   assert(!options.quiet);
   assert(!options.help);
@@ -58,4 +58,8 @@ test("CLI with help short circuits", () => {
 
   assert(options.help);
   assert(!options.version);
+});
+
+test("CLI filtering without value throws", () => {
+  assert.throws(() => parseOptions(["dist/", "-f"], { ...defaultOptions }));
 });
