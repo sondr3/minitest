@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-import { run, parseCli } from "../dist/runner.js";
+import { run } from "../dist/runner.js";
 
-run(parseCli(process.argv));
+run(process.argv);

@@ -1,9 +1,9 @@
 import { promises as fs } from "node:fs";
-import { createRequire } from "node:module";
 import { basename, join } from "node:path";
 import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 
+import { parseCli } from "./cli.js";
 import { Test } from "./test_fn.js";
 
 const USE_COLORS = process.env["NO_COLOR"] !== undefined;
@@ -15,40 +15,11 @@ const colors = {
   yellow: 33,
 };
 
-const HELP = (version: string) => `minitest v${version}
-A low-feature and performant test runner inspired by Rust and Deno
-
-USAGE:
-\tmt <dir> [flags]
-
-OPTIONS:
-\t-q, --quiet\t\t Quiet output
-\t-f, --filter=<filter>\t Filter tests by name, accepts regex
-\t-v, --version\t\t Print version
-\t-h, --help\t\t Print help
-`;
-
 export const color = (str: string, color: "red" | "green" | "yellow") => {
   return USE_COLORS ? str : `\x1b[${colors[color]}m${str}\x1b[${colors.reset}m`;
 };
 
 export const tests: Map<string, Array<Test>> = new Map();
-
-interface CliOptions {
-  dir: string;
-  help: boolean;
-  version: boolean;
-  quiet: boolean;
-  filter?: (name: string) => boolean;
-}
-
-const defaultOptions: CliOptions = {
-  dir: ".",
-  help: false,
-  version: false,
-  quiet: false,
-  filter: undefined,
-};
 
 const ignoreDir = (dir: string): boolean => {
   if (dir === "node_modules") return true;
@@ -108,54 +79,8 @@ function results(): { ok: number; failed: number; ignored: number } {
   return res;
 }
 
-export function parseCli(argv: Array<string>): CliOptions {
-  const args = argv.slice(2);
-  const options: CliOptions = defaultOptions;
-
-  if (args.length > 0) {
-    options.dir = args[0];
-  }
-
-  options.help = args.includes("-h") || args.includes("--help");
-  options.version = args.includes("-v") || args.includes("--version");
-  options.quiet = args.includes("-q") || args.includes("--quiet");
-
-  if (args.includes("-f") || args.includes("--filter")) {
-    const index = args.findIndex((arg) => arg === "-f" || arg === "--filter");
-    if (index + 1 >= args.length) {
-      throw new Error("Missing filter string");
-    }
-
-    const filter = args[index + 1];
-    if (filter.startsWith("/") && filter.endsWith("/")) {
-      const regex = new RegExp(filter.slice(1, filter.length - 1));
-      options.filter = (name: string) => regex.test(name);
-    } else {
-      options.filter = (name: string) => filter.includes(name);
-    }
-  }
-
-  return options;
-}
-
-function printVersionHelp(version: boolean, help: boolean) {
-  const require = createRequire(import.meta.url);
-  const data = require("../package.json") as { version: string };
-
-  if (version) {
-    process.stdout.write(`minitest v${data.version}\n`);
-    process.exit(0);
-  }
-
-  if (help) {
-    process.stdout.write(HELP(data.version));
-    process.exit(0);
-  }
-}
-
-export async function run({ dir, version, help, quiet }: CliOptions): Promise<void> {
-  printVersionHelp(version, help);
-
+export async function run(argv: Array<string>): Promise<void> {
+  const { dir, quiet } = parseCli(argv);
   if ((await fs.stat(dir)).isFile()) {
     await import(pathToFileURL(dir).toString());
     tests.set(dir, tests.get("unnamed") ?? []);
