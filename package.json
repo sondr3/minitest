@@ -1,6 +1,9 @@
 {
   "name": "@sondr3/minitest",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=16"
+  },
   "description": "A very small test runner",
   "type": "module",
   "bin": {
@@ -29,7 +32,7 @@
   "keywords": [
     "test"
   ],
-  "author": "Sondre Nilsen <sondre@eons.io>",
+  "author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sondr3/minitest/issues"
