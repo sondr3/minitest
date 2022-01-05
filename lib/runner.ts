@@ -5,9 +5,9 @@ import { pathToFileURL } from "node:url";
 
 import { parseCli } from "./cli.js";
 import { Test } from "./test_fn.js";
-import { color } from "./utils.js";
+import { color, mapSize } from "./utils.js";
 
-export const tests: Map<string, Array<Test>> = new Map();
+export const TESTS: Array<Test> = [];
 
 const ignoreDir = (dir: string): boolean => dir === "node_modules" || dir.startsWith(".");
 const testFile = (file: string): boolean => basename(file) === "test.js" || file.endsWith(".test.js");
@@ -24,55 +24,110 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
   }
 }
 
-function report(quiet: boolean): void {
-  const count = Array.from(tests.values()).reduce((prev, it) => prev + it.length, 0);
-  process.stdout.write(`running ${count} ${count === 1 ? "test" : "tests"}\n`);
-  for (const [file, xs] of tests.entries()) {
-    if (!quiet) {
-      process.stdout.write(`running ${xs.length} ${xs.length === 1 ? "test" : "tests"} in ${file}\n`);
+class Runner {
+  private readonly quiet;
+  private readonly filterFn!: (name: string) => boolean;
+  private readonly filter: boolean = false;
+  private tests: Map<string, Array<Test>> = new Map();
+  private only = false;
+  private ok = 0;
+  private failed = 0;
+  private ignored = 0;
+  private filtered = 0;
+
+  constructor(quiet: boolean, filter?: (name: string) => boolean) {
+    this.quiet = quiet;
+
+    if (filter) {
+      this.filterFn = filter;
+      this.filter = true;
     }
-    xs.forEach((test) => test.result(quiet));
   }
 
-  const { ok, failed, ignored } = results();
+  async run(entry: string) {
+    await this.collect(entry);
+    this.filterTestsMarkedOnly();
 
-  const success = failed > 0 ? color("FAILED", "red") : color("ok", "green");
-  const time = performance.now().toFixed(0);
+    if (this.filter) {
+      this.filterTests();
+    }
 
-  process.stdout.write(
-    `\ntest result: ${success}. ${ok} passed; ${failed} failed; ${ignored} ignored; 0 filtered out; finished in ${time}ms\n\n`,
-  );
-
-  if (failed > 0) {
-    process.exit(1);
+    this.runTests();
   }
-}
 
-function results(): { ok: number; failed: number; ignored: number } {
-  const start = { ok: 0, failed: 0, ignored: 0 };
-  return Array.from(tests.values()).reduce((prev, cur) => {
-    prev.ignored += cur.filter((t) => t.ignore).length;
-    prev.ok += cur.filter((t) => t.success).length;
-    prev.failed += cur.filter((t) => !t.success).length;
+  report(): void {
+    const success = this.failed > 0 ? color("FAILED", "red") : color("ok", "green");
+    const time = performance.now().toFixed(0);
 
-    return prev;
-  }, start);
+    process.stdout.write(
+      `\ntest result: ${success}. ${this.ok} passed; ${this.failed} failed; ${this.ignored} ignored; ${this.filtered} filtered out; finished in ${time}ms\n\n`,
+    );
+
+    if (this.failed > 0 || this.only) {
+      process.exit(1);
+    }
+  }
+
+  private async collect(entry: string) {
+    if ((await fs.stat(entry)).isFile()) {
+      await import(pathToFileURL(entry).toString());
+      this.tests.set(entry, TESTS.splice(0));
+    } else {
+      for await (const file of walkDir(entry)) {
+        await import(pathToFileURL(file).toString());
+        this.tests.set(file, TESTS.splice(0));
+      }
+    }
+  }
+
+  private filterTestsMarkedOnly() {
+    const onlyTests: Map<string, Array<Test>> = new Map();
+    for (const [file, tests] of this.tests.entries()) {
+      if (tests.some((t) => t.only)) {
+        const onlies = tests.filter((t) => t.only);
+        this.only = true;
+        onlyTests.set(file, onlies);
+      }
+    }
+
+    if (this.only) {
+      this.tests = onlyTests;
+    }
+  }
+
+  private runTests() {
+    const count = Array.from(this.tests.values()).reduce((prev, it) => prev + it.length, 0);
+    process.stdout.write(`running ${count} ${count === 1 ? "test" : "tests"}\n`);
+
+    for (const [file, xs] of this.tests.entries()) {
+      if (!this.quiet) {
+        process.stdout.write(`running ${xs.length} ${xs.length === 1 ? "test" : "tests"} in ${file}\n`);
+      }
+
+      for (const test of xs) {
+        const res = test.run();
+        this.ok += res ? 1 : 0;
+        this.failed += res ? 0 : 1;
+        this.ignored += test.ignore ? 1 : 0;
+
+        test.result(this.quiet);
+      }
+    }
+  }
+
+  private filterTests() {
+    const tests = new Map(
+      Array.from(this.tests.entries()).map(([file, xs]) => [file, xs.filter((t) => this.filterFn(t.name))]),
+    );
+    this.filtered = mapSize(this.tests) - mapSize(tests);
+    this.tests = tests;
+  }
 }
 
 export async function run(argv: Array<string>): Promise<void> {
-  const { dir, quiet } = parseCli(argv);
+  const { dir, quiet, filter } = parseCli(argv);
+  const runner = new Runner(quiet, filter);
 
-  if ((await fs.stat(dir)).isFile()) {
-    await import(pathToFileURL(dir).toString());
-    tests.set(dir, tests.get("unnamed") ?? []);
-    tests.delete("unnamed");
-  } else {
-    for await (const file of walkDir(dir)) {
-      await import(pathToFileURL(file).toString());
-      tests.set(file, tests.get("unnamed") ?? []);
-      tests.delete("unnamed");
-    }
-  }
-
-  report(quiet);
+  await runner.run(dir);
+  runner.report();
 }

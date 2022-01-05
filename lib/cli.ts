@@ -73,7 +73,7 @@ export const parseOptions = (args: Array<string>, options: CliOptions): CliOptio
           const regex = new RegExp(filter.slice(1, filter.length - 1));
           options.filter = (name: string) => regex.test(name);
         } else {
-          options.filter = (name: string) => filter.includes(name);
+          options.filter = (name: string) => name.toLowerCase().includes(filter.toLowerCase());
         }
         return parseOptions(args.slice(2), options);
       }

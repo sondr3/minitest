@@ -1,4 +1,4 @@
-import { tests } from "./runner.js";
+import { TESTS } from "./runner.js";
 import { color } from "./utils.js";
 
 export interface TestDefinition {
@@ -48,13 +48,10 @@ export class Test {
       throw new Error("Misformed test definition");
     }
 
-    if (!this.ignore) void this.run();
-
-    if (!tests.get("unnamed")) tests.set("unnamed", []);
-    tests.get("unnamed")?.push(this);
+    TESTS.push(this);
   }
 
-  private run(): void {
+  run(): boolean {
     if (this.ignore) {
       this.success = true;
     }
@@ -66,6 +63,8 @@ export class Test {
       this.success = false;
       this.error = e instanceof Error ? e : undefined;
     }
+
+    return this.success;
   }
 
   result(quiet = false): void {
