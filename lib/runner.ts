@@ -112,7 +112,7 @@ class Runner {
     process.stdout.write(`running ${count} ${count === 1 ? "test" : "tests"}\n`);
 
     for (const [file, xs] of this.tests.entries()) {
-      if (!this.quiet) {
+      if (!this.quiet && xs.length > 0) {
         process.stdout.write(`running ${xs.length} ${xs.length === 1 ? "test" : "tests"} in ${file}\n`);
       }
 
