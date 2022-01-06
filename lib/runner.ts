@@ -131,7 +131,7 @@ class Runner {
   }
 
   private filterTests() {
-    const filtered: [string, TestRunner[]][] = Array.from(this.tests.entries()).flatMap(([file, xs]) => {
+    const filtered: Array<[string, Array<TestRunner>]> = Array.from(this.tests.entries()).flatMap(([file, xs]) => {
       const filtered = xs.filter((t) => this.filterFn(t.name));
       return filtered.length > 0 ? [[file, filtered]] : [];
     });
