@@ -19,11 +19,14 @@
 ## Table of Contents
 
 - [Quickstart](#quickstart)
-- [Getting started](#getting-started)
+- [Usage](#usage)
   - [Finding tests](#finding-tests)
   - [Writing tests](#writing-tests)
   - [Running tests](#running-tests)
   - [Filtering](#filtering)
+  - [Failing fast](#failing-fast)
+  - [Quiet](#quiet)
+  - [CLI](#cli)
 - [License](#license)
 </details>
 
@@ -59,7 +62,7 @@
    test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out; finished in 32ms
    ```
 
-# Getting started
+# Usage
 
 ## Finding tests
 
@@ -178,6 +181,48 @@ be a temporary measure as it disables nearly the whole test suite.
 test("other ignored", () => {}).only();
 test({ name: "ignored", only: true }, () => {});
 test("final ignored", () => {}, { only: true });
+```
+
+## Failing fast
+
+If you have a test suite that takes a long time to complete or you simply want
+to exit after the first error, one can use the `--fail-fast` option:
+
+```shell
+# fail immediately
+mt --fail-fast
+
+# fail after three failures
+mt --fail-fast 3
+```
+
+## Quiet
+
+The test output for `mt` can quickly become verbose once the test suite grows, to
+help with this one can use the `--quiet` flag to make it far less verbose:
+
+```shell
+mt --quiet
+```
+
+## CLI
+
+For a complete overview over the available options, use the `--help` flag:
+
+```shell
+$ mt --help
+minitest v0.1.0
+A low-feature and performant test runner inspired by Rust and Deno
+
+USAGE:
+        mt <dir> [flags]
+
+OPTIONS:
+        -q, --quiet              Quiet output
+        -f, --filter=<filter>    Filter tests by name, accepts regex
+        -F, --fail-fast=<N>      Fail after N test failures [default: 0]
+        -v, --version            Print version
+        -h, --help               Print help
 ```
 
 # License
