@@ -34,6 +34,7 @@ class Runner {
   private readonly failFast?: number;
   private readonly filterFn!: (name: string) => boolean;
   private readonly filter: boolean = false;
+  private failures: Array<[string, Error | undefined]> = [];
   private tests: Map<string, Array<TestRunner>> = new Map();
   private only = false;
   private ok = 0;
@@ -63,8 +64,26 @@ class Runner {
   }
 
   report(): void {
-    const success = this.failed > 0 ? color("FAILED", "red") : color("ok", "green");
     const time = performance.now().toFixed(0);
+    const success = this.failed > 0 ? color("FAILED", "red") : color("ok", "green");
+
+    if (this.failed) {
+      process.stdout.write(`\n\nfailures:\n`);
+      this.failures
+        .filter(([, err]) => err)
+        .forEach(([name, err]) => {
+          process.stdout.write(`\n---- ${name} message ----\n`);
+          if (err?.stack) {
+            process.stdout.write(err.stack);
+          } else {
+            process.stdout.write(err?.message ?? "");
+          }
+          process.stdout.write(`\n`);
+        });
+      process.stdout.write(`\n\nfailures:\n`);
+      this.failures.forEach(([name]) => process.stdout.write(`\t${name}\n`));
+      process.stdout.write(`\n`);
+    }
 
     process.stdout.write(
       `\ntest result: ${success}. ${this.ok} passed; ${this.failed} failed; ${this.ignored} ignored; ${this.filtered} filtered out; finished in ${time}ms\n\n`,
@@ -122,12 +141,15 @@ class Runner {
         const res = await test.run();
         if (test.ignore) {
           this.ignored += 1;
+        } else if (res) {
+          this.ok += 1;
         } else {
-          this.ok += res ? 1 : 0;
-          this.failed += res ? 0 : 1;
+          this.failed += 1;
+          this.failures.push([test.name, test.error]);
         }
 
         test.result(this.quiet);
+
         if (this.shouldFail()) {
           return;
         }

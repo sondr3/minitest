@@ -40,11 +40,6 @@ export class TestRunner {
       this.report(".", color("ok", "green"), quiet);
     } else {
       this.report("F", color("FAILED", "red"), quiet);
-      if (this.error?.stack) {
-        process.stderr.write(`\n\n${this.error?.stack}\n`);
-      } else if (this.error) {
-        process.stderr.write(`\n\n${this.error.message}\n`);
-      }
     }
   }
 
