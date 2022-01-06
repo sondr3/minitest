@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 
 import { parseCli } from "./cli.js";
 import { Test } from "./test_fn.js";
+import { TestRunner } from "./test_runner.js";
 import { color, mapSize } from "./utils.js";
 
 export const TESTS: Array<Test> = [];
@@ -28,7 +29,7 @@ class Runner {
   private readonly quiet;
   private readonly filterFn!: (name: string) => boolean;
   private readonly filter: boolean = false;
-  private tests: Map<string, Array<Test>> = new Map();
+  private tests: Map<string, Array<TestRunner>> = new Map();
   private only = false;
   private ok = 0;
   private failed = 0;
@@ -71,17 +72,24 @@ class Runner {
   private async collect(entry: string) {
     if ((await fs.stat(entry)).isFile()) {
       await import(pathToFileURL(entry).toString());
-      this.tests.set(entry, TESTS.splice(0));
+      this.addTests(entry);
     } else {
       for await (const file of walkDir(entry)) {
         await import(pathToFileURL(file).toString());
-        this.tests.set(file, TESTS.splice(0));
+        this.addTests(file);
       }
     }
   }
 
+  private addTests(entry: string) {
+    this.tests.set(
+      entry,
+      TESTS.splice(0).map((t) => t.toTestRunner()),
+    );
+  }
+
   private filterTestsMarkedOnly() {
-    const onlyTests: Map<string, Array<Test>> = new Map();
+    const onlyTests: Map<string, Array<TestRunner>> = new Map();
     for (const [file, tests] of this.tests.entries()) {
       if (tests.some((t) => t.only)) {
         const onlies = tests.filter((t) => t.only);

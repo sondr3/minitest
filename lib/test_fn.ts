@@ -1,5 +1,5 @@
 import { TESTS } from "./runner.js";
-import { color } from "./utils.js";
+import { TestRunner } from "./test_runner.js";
 
 export interface TestDefinition {
   name: string;
@@ -10,24 +10,27 @@ export interface TestDefinition {
   only?: boolean;
 }
 
-type TestFn = () => void | Promise<void>;
+export type TestFn = () => void | Promise<void>;
 type TestNoFn = Omit<TestDefinition, "fn">;
 type TestOptions = Pick<TestDefinition, "ignore" | "only">;
 
-export class Test {
-  readonly name!: string;
-  readonly fn!: TestFn;
-  readonly ignore: boolean = false;
-  readonly only: boolean = false;
-  success = false;
-  error?: Error = undefined;
+const isTestDefinition = (object: unknown): object is TestDefinition => {
+  return object !== null && typeof object === "object" && "name" in object && "fn" in object;
+};
 
-  constructor(fnNameOrOpts: TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions) {
+export class Test {
+  private readonly name!: string;
+  private readonly fn!: TestFn;
+  private _ignore = false;
+  private _only = false;
+
+  constructor(fnNameOrOpts: TestDefinition | TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions) {
     if (typeof fnNameOrOpts === "function") {
       const name = fnNameOrOpts.name === "" ? "unnamed" : fnNameOrOpts.name;
       this.name = name;
       this.fn = fnNameOrOpts;
-      Object.assign(this, opts);
+      this._ignore = opts?.ignore ?? false;
+      this._only = opts?.only ?? false;
     } else if (typeof fnNameOrOpts === "string") {
       if (!fn || typeof fn !== "function") {
         throw new Error("Test is missing function");
@@ -35,16 +38,32 @@ export class Test {
 
       this.name = fnNameOrOpts;
       this.fn = fn;
-      Object.assign(this, opts);
+      this._ignore = opts?.ignore ?? false;
+      this._only = opts?.only ?? false;
     } else if (typeof fnNameOrOpts === "object") {
       if (!fnNameOrOpts.name) {
         throw new Error("Test must have a name");
       }
-      if (fn || typeof fn === "function") {
-        throw new Error("Test has two test functions");
-      }
 
-      Object.assign(this, fnNameOrOpts);
+      if (isTestDefinition(fnNameOrOpts)) {
+        if (fn || typeof fn === "function") {
+          throw new Error("Test has two test functions");
+        }
+
+        this.name = fnNameOrOpts.name;
+        this.fn = fnNameOrOpts.fn;
+        this._ignore = fnNameOrOpts.ignore ?? false;
+        this._only = fnNameOrOpts.only ?? false;
+      } else {
+        if (!fn) {
+          throw new Error("Test is missing function");
+        }
+
+        this.name = fnNameOrOpts.name;
+        this.fn = fn;
+        this._ignore = fnNameOrOpts.ignore ?? false;
+        this._only = fnNameOrOpts.only ?? false;
+      }
     } else {
       throw new Error("Misformed test definition");
     }
@@ -52,45 +71,19 @@ export class Test {
     TESTS.push(this);
   }
 
-  run(): boolean {
-    if (this.ignore) {
-      this.success = true;
-    }
-
-    try {
-      void this.fn();
-      this.success = true;
-    } catch (e) {
-      this.success = false;
-      this.error = e instanceof Error ? e : undefined;
-    }
-
-    return this.success;
+  /** Mark the test as ignored */
+  ignore(): void {
+    this._ignore = true;
   }
 
-  result(quiet = false): void {
-    if (this.ignore) {
-      this.report("i", color("ignored", "yellow"), quiet);
-    }
-
-    if (this.success) {
-      this.report(".", color("ok", "green"), quiet);
-    } else {
-      this.report("F", color("FAILED", "red"), quiet);
-      if (this.error?.stack) {
-        process.stderr.write(`\n\n${this.error?.stack}\n`);
-      } else if (this.error) {
-        process.stderr.write(`\n\n${this.error.message}\n`);
-      }
-    }
+  /** Only run this test */
+  only(): void {
+    this._only = true;
   }
 
-  private report(short: string, long: string, quiet: boolean) {
-    if (quiet) {
-      process.stdout.write(`${short}`);
-    } else {
-      process.stdout.write(`test  ${this.name} ... ${long}\n`);
-    }
+  /** @internal */
+  toTestRunner(): TestRunner {
+    return new TestRunner(this.name, this.fn, this._ignore, this._only);
   }
 }
 
@@ -99,6 +92,6 @@ export function test(t: TestDefinition): Test;
 export function test(opts: TestNoFn, fn: TestFn): Test;
 export function test(name: string, fn: TestFn): Test;
 export function test(name: string, fn: TestFn, options?: TestOptions): Test;
-export function test(fnNameOrOpts: TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions): Test {
+export function test(fnNameOrOpts: TestDefinition | TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions): Test {
   return new Test(fnNameOrOpts, fn, opts);
 }
