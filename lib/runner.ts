@@ -1,5 +1,5 @@
 import { promises as fs } from "node:fs";
-import { basename, join } from "node:path";
+import { join, parse } from "node:path";
 import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 
@@ -11,7 +11,11 @@ import { color, mapSize } from "./utils.js";
 export const TESTS: Array<Test> = [];
 
 const ignoreDir = (dir: string): boolean => dir === "node_modules" || dir.startsWith(".");
-const testFile = (file: string): boolean => basename(file) === "test.js" || file.endsWith(".test.js");
+const testExt = (ext: string) => ext === ".js" || ext === ".mjs";
+export const testFile = (file: string): boolean => {
+  const { name, ext } = parse(file);
+  return testExt(ext) && (name === "test" || name.endsWith(".test") || name.endsWith("_test"));
+};
 
 async function* walkDir(dir: string): AsyncGenerator<string> {
   for await (const d of await fs.opendir(dir)) {
@@ -19,7 +23,7 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
 
     if (d.isDirectory() && !ignoreDir(d.name)) {
       yield* walkDir(entry);
-    } else if (d.isFile() && testFile(entry)) {
+    } else if (d.isFile() && testFile(d.name)) {
       yield entry;
     }
   }
