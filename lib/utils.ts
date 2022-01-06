@@ -14,5 +14,5 @@ export const color = (str: string, color: "red" | "green" | "yellow") => {
 export const mapSize = <U, T>(map: Map<U, Array<T>>): number => {
   return Array.from(map)
     .flatMap(([, it]) => it.length)
-    .reduce((p, c) => p + c);
+    .reduce((p, c) => p + c, 0);
 };
