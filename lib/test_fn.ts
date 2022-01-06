@@ -72,8 +72,8 @@ export class Test {
   }
 
   /** Mark the test as ignored */
-  ignore(): void {
-    this._ignore = true;
+  ignore(yes = true): void {
+    this._ignore = yes;
   }
 
   /** Only run this test */
