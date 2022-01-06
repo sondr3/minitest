@@ -4,7 +4,9 @@ import { color } from "./utils.js";
 export interface TestDefinition {
   name: string;
   fn: TestFn;
+  // Ignore this test, skipping it and run the test suite as if it doesn't exist.
   ignore?: boolean;
+  // Ignores all tests that do not have the `only` flag and fails the test suite.
   only?: boolean;
 }
 
@@ -14,7 +16,7 @@ type TestOptions = Pick<TestDefinition, "ignore" | "only">;
 
 export class Test {
   readonly name!: string;
-  readonly fn: TestFn;
+  readonly fn!: TestFn;
   readonly ignore: boolean = false;
   readonly only: boolean = false;
   success = false;
@@ -38,11 +40,10 @@ export class Test {
       if (!fnNameOrOpts.name) {
         throw new Error("Test must have a name");
       }
-      if (!fn || typeof fn !== "function") {
-        throw new Error("Test is missing function");
+      if (fn || typeof fn === "function") {
+        throw new Error("Test has two test functions");
       }
 
-      this.fn = fn;
       Object.assign(this, fnNameOrOpts);
     } else {
       throw new Error("Misformed test definition");
@@ -94,6 +95,7 @@ export class Test {
 }
 
 export function test(fn: TestFn): Test;
+export function test(t: TestDefinition): Test;
 export function test(opts: TestNoFn, fn: TestFn): Test;
 export function test(name: string, fn: TestFn): Test;
 export function test(name: string, fn: TestFn, options?: TestOptions): Test;
