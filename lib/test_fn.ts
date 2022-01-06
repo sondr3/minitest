@@ -19,8 +19,8 @@ const isTestDefinition = (object: unknown): object is TestDefinition => {
 };
 
 export class Test {
-  private readonly name!: string;
-  private readonly fn!: TestFn;
+  private readonly name: string;
+  private readonly fn: TestFn;
   private _ignore = false;
   private _only = false;
 

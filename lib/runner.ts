@@ -53,7 +53,7 @@ class Runner {
       this.filterTests();
     }
 
-    this.runTests();
+    await this.runTests();
   }
 
   report(): void {
@@ -103,7 +103,7 @@ class Runner {
     }
   }
 
-  private runTests() {
+  private async runTests() {
     const count = Array.from(this.tests.values()).reduce((prev, it) => prev + it.length, 0);
     process.stdout.write(`running ${count} ${count === 1 ? "test" : "tests"}\n`);
 
@@ -113,10 +113,13 @@ class Runner {
       }
 
       for (const test of xs) {
-        const res = test.run();
-        this.ok += res ? 1 : 0;
-        this.failed += res ? 0 : 1;
-        this.ignored += test.ignore ? 1 : 0;
+        const res = await test.run();
+        if (test.ignore) {
+          this.ignored += 1;
+        } else {
+          this.ok += res ? 1 : 0;
+          this.failed += res ? 0 : 1;
+        }
 
         test.result(this.quiet);
       }

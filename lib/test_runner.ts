@@ -16,13 +16,14 @@ export class TestRunner {
     this.only = only;
   }
 
-  run(): boolean {
+  async run(): Promise<boolean> {
     if (this.ignore) {
       this.success = true;
+      return this.success;
     }
 
     try {
-      void this.fn();
+      await this.fn();
       this.success = true;
     } catch (e) {
       this.success = false;
@@ -35,9 +36,7 @@ export class TestRunner {
   result(quiet = false): void {
     if (this.ignore) {
       this.report("i", color("ignored", "yellow"), quiet);
-    }
-
-    if (this.success) {
+    } else if (this.success) {
       this.report(".", color("ok", "green"), quiet);
     } else {
       this.report("F", color("FAILED", "red"), quiet);
