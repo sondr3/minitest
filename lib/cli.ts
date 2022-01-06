@@ -5,6 +5,7 @@ export interface CliOptions {
   help: boolean;
   version: boolean;
   quiet: boolean;
+  failFast?: number;
   filter?: (name: string) => boolean;
 }
 
@@ -13,6 +14,7 @@ export const defaultOptions: CliOptions = {
   help: false,
   version: false,
   quiet: false,
+  failFast: undefined,
   filter: undefined,
 };
 
@@ -25,6 +27,7 @@ USAGE:
 OPTIONS:
 \t-q, --quiet\t\t Quiet output
 \t-f, --filter=<filter>\t Filter tests by name, accepts regex
+\t-F, --fail-fast=<N>\t Fail after N test failures [default: 0]
 \t-v, --version\t\t Print version
 \t-h, --help\t\t Print help
 `;
@@ -49,10 +52,6 @@ export const parseOptions = (args: Array<string>, options: CliOptions): CliOptio
 
   if (args[0].startsWith("-")) {
     switch (args[0]) {
-      case "-q":
-      case "--quiet":
-        options.quiet = true;
-        return parseOptions(args.slice(1), options);
       case "-v":
       case "--version":
         options.version = true;
@@ -61,6 +60,27 @@ export const parseOptions = (args: Array<string>, options: CliOptions): CliOptio
       case "--help":
         options.help = true;
         return options;
+      case "-q":
+      case "--quiet":
+        options.quiet = true;
+        return parseOptions(args.slice(1), options);
+      case "-F":
+      case "--fail-fast": {
+        const index = args.findIndex((arg) => arg === "-F" || arg === "--fail-fast");
+        if (index + 1 >= args.length) {
+          options.failFast = 0;
+          return options;
+        }
+
+        const val = Number(args[index + 1]);
+        if (isNaN(val) || val === 0) {
+          options.failFast = 0;
+          return parseOptions(args.slice(1), options);
+        } else {
+          options.failFast = val;
+          return parseOptions(args.slice(2), options);
+        }
+      }
       case "-f":
       case "--filter": {
         const index = args.findIndex((arg) => arg === "-f" || arg === "--filter");

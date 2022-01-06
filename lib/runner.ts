@@ -31,6 +31,7 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
 
 class Runner {
   private readonly quiet;
+  private readonly failFast?: number;
   private readonly filterFn!: (name: string) => boolean;
   private readonly filter: boolean = false;
   private tests: Map<string, Array<TestRunner>> = new Map();
@@ -40,8 +41,9 @@ class Runner {
   private ignored = 0;
   private filtered = 0;
 
-  constructor(quiet: boolean, filter?: (name: string) => boolean) {
+  constructor(quiet: boolean, failFast?: number, filter?: (name: string) => boolean) {
     this.quiet = quiet;
+    this.failFast = failFast;
 
     if (filter) {
       this.filterFn = filter;
@@ -126,8 +128,17 @@ class Runner {
         }
 
         test.result(this.quiet);
+        if (this.shouldFail()) {
+          return;
+        }
       }
     }
+  }
+
+  private shouldFail(): boolean {
+    if (this.failFast === undefined) return false;
+
+    return this.failed > this.failFast;
   }
 
   private filterTests() {
@@ -142,8 +153,8 @@ class Runner {
 }
 
 export async function run(argv: Array<string>): Promise<void> {
-  const { dir, quiet, filter } = parseCli(argv);
-  const runner = new Runner(quiet, filter);
+  const { dir, quiet, filter, failFast } = parseCli(argv);
+  const runner = new Runner(quiet, failFast, filter);
 
   await runner.run(dir);
   runner.report();

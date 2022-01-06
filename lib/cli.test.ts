@@ -8,6 +8,7 @@ const testOptions: CliOptions = {
   help: false,
   version: false,
   quiet: false,
+  failFast: undefined,
   filter: undefined,
 };
 
@@ -17,6 +18,7 @@ test("CLI without options", () => {
   assert(!options.quiet);
   assert(!options.help);
   assert(!options.version);
+  assert(!options.failFast);
 
   assert.equal(options.dir, ".");
   assert.equal(options.filter, undefined);
@@ -28,6 +30,7 @@ test("CLI with options, no dir", () => {
   assert(options.quiet);
   assert(!options.help);
   assert(!options.version);
+  assert(!options.failFast);
 
   assert.equal(options.dir, ".");
   assert.equal(options.filter, undefined);
@@ -70,4 +73,39 @@ test("CLI with help short circuits", () => {
 
 test("CLI filtering without value throws", () => {
   assert.throws(() => parseOptions(["dist/", "-f"], { ...testOptions }));
+});
+
+test("CLI with fail fast", () => {
+  const options = parseOptions(["dist/", "--fail-fast", "5"], { ...testOptions });
+
+  assert.equal(options.dir, "dist/");
+  assert.equal(options.failFast, 5);
+});
+
+test("CLI kitchensink", () => {
+  const options = parseOptions(["-f", "test", "dist/", "--fail-fast", "5"], { ...testOptions });
+
+  assert.equal(options.dir, "dist/");
+  assert.equal(typeof options.filter, "function");
+  assert.equal(options.failFast, 5);
+});
+
+test("CLI with fail fast, no value", () => {
+  const options = parseOptions(["-F", "dir"], { ...testOptions });
+
+  assert.equal(options.dir, "dir");
+  assert.equal(options.failFast, 0);
+});
+
+test("CLI with fail fast, value", () => {
+  const options = parseOptions(["--fail-fast", "10"], { ...testOptions });
+  assert.equal(options.failFast, 10);
+});
+
+test("CLI with fail fast, no value and quiet", () => {
+  const options = parseOptions(["dist/", "-F", "-q"], { ...testOptions });
+
+  assert.equal(options.dir, "dist/");
+  assert(options.quiet);
+  assert.equal(options.failFast, 0);
 });
