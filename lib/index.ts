@@ -1,1 +1,1 @@
-export * from "./test_fn.js";
+export { test } from "./test_fn.js";
