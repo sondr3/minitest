@@ -3,21 +3,21 @@ import { join, parse } from "node:path";
 import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 
-import { parseCli } from "./cli.js";
+import { parseCli, printVersionHelp } from "./cli.js";
 import { Test } from "./test_fn.js";
 import { TestRunner } from "./test_runner.js";
 import { color, mapSize } from "./utils.js";
 
 export const TESTS: Array<Test> = [];
 
-const ignoreDir = (dir: string): boolean => dir === "node_modules" || dir.startsWith(".");
+export const ignoreDir = (dir: string): boolean => dir === "node_modules" || dir.startsWith(".");
 const testExt = (ext: string) => ext === ".js" || ext === ".mjs";
 export const testFile = (file: string): boolean => {
   const { name, ext } = parse(file);
   return testExt(ext) && (name === "test" || name.endsWith(".test") || name.endsWith("_test"));
 };
 
-async function* walkDir(dir: string): AsyncGenerator<string> {
+export async function* walkDir(dir: string): AsyncGenerator<string> {
   for await (const d of await fs.opendir(dir)) {
     const entry = join(dir, d.name);
 
@@ -175,7 +175,13 @@ class Runner {
 }
 
 export async function run(argv: Array<string>): Promise<void> {
-  const { dir, quiet, filter, failFast } = parseCli(argv);
+  const { dir, quiet, filter, failFast, version, help } = parseCli(argv);
+
+  if (version || help) {
+    printVersionHelp(version, help);
+    process.exit(0);
+  }
+
   const runner = new Runner(quiet, failFast, filter);
 
   await runner.run(dir);

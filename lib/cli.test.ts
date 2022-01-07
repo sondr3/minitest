@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 
-import { CliOptions, parseOptions } from "./cli.js";
+import { CliOptions, parseCli, parseOptions } from "./cli.js";
 import { test } from "./index.js";
 
 const testOptions: CliOptions = {
@@ -108,4 +108,24 @@ test("CLI with fail fast, no value and quiet", () => {
   assert.equal(options.dir, "dist/");
   assert(options.quiet);
   assert.equal(options.failFast, 0);
+});
+
+test("CLI with fail fast last, no value", () => {
+  const options = parseOptions(["fail", "-F"], { ...testOptions });
+
+  assert.equal(options.dir, "fail");
+  assert.equal(options.failFast, 0);
+});
+
+test("CLI with version flag", () => {
+  assert.doesNotThrow(() => parseCli(["", "", "--version"]));
+});
+
+test("CLI with help flag", () => {
+  assert.doesNotThrow(() => parseCli(["", "", "-h"]));
+});
+
+test("CLI with regex filter", () => {
+  const options = parseOptions(["--filter", "/test-*d/"], { ...testOptions });
+  assert.equal(typeof options.filter, "function");
 });

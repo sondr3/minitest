@@ -32,18 +32,16 @@ OPTIONS:
 \t-h, --help\t\t Print help
 `;
 
-const printVersionHelp = (version: boolean, help: boolean) => {
+export const printVersionHelp = (version: boolean, help: boolean) => {
   const require = createRequire(import.meta.url);
   const data = require("../package.json") as { version: string };
 
   if (version) {
     process.stdout.write(`minitest v${data.version}\n`);
-    process.exit(0);
   }
 
   if (help) {
     process.stdout.write(HELP(data.version));
-    process.exit(0);
   }
 };
 
@@ -109,10 +107,6 @@ export const parseOptions = (args: Array<string>, options: CliOptions): CliOptio
 export const parseCli = (argv: Array<string>): CliOptions => {
   const args = argv.slice(2);
   const options = parseOptions(args, defaultOptions);
-
-  if (options.version || options.help) {
-    printVersionHelp(options.version, options.help);
-  }
 
   return options;
 };
