@@ -29,6 +29,7 @@
   - [CLI](#cli)
 - [Extras](#extras)
   - [TypeScript](#typescript)
+  - [Coverage](#coverage)
   - [JSX, TSX, browsers](#jsx-tsx-browsers)
 - [Rationale](#rationale)
 - [License](#license)
@@ -100,6 +101,12 @@ test({ name: "hello world #2" }, () => {
 You can use any assertion library you want, like [Chai][chai] for a TDD/BDD
 like assertions and [Sinon.JS][sinon] to spy and mock functionality. The only
 requirement is that the assertions throw when they fail.
+
+If you come from a frameworks like [Jest][jest] you may be surprised to learn
+that there is no built-in support for nesting tests, or anything like `beforeAll`
+or `beforeEach` in `minitest`. I can highly recommend [this][nesting] article from
+Kent C. Dodds about nesting and test hooks. After having used Deno and Rust which do
+not have such functionality, I don't miss it. I recommend you give it a try!
 
 ### Async functions
 
@@ -241,6 +248,20 @@ There is no built-in support for natively running TypeScript files, they need to
 be compiled to JavaScript first. In other words, your build step needs to happen
 before you run your tests.
 
+## Coverage
+
+To generate coverate reporting for your tests, I highly recommend using [c8][c8]. It
+generates coverage based on the built-in coverage functionality of NodeJS and will
+just magically work with your tests. It is also very fast compared to similar
+functionality in other testing libraries. To generate coverage by default, change
+your `test` script to the following after you've added c8 as a dependency:
+
+```json
+  "scripts": {
+    "test": "c8 mt <dir>",
+  },
+```
+
 ## JSX, TSX, browsers
 
 Like with TypeScript, there is no built-in support for usage with JSX and/or TSX,
@@ -268,3 +289,5 @@ MIT.
 [uvu]: https://github.com/lukeed/uvu
 [chai]: https://www.npmjs.com/package/chai
 [sinon]: https://www.npmjs.com/package/sinon
+[c8]: https://github.com/bcoe/c8
+[nesting]: https://kentcdodds.com/blog/avoid-nesting-when-youre-testing
