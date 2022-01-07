@@ -20,7 +20,7 @@
   "scripts": {
     "dev": "tsc --watch --incremental",
     "build": "tsc",
-    "test": "c8 node bin/mt.mjs",
+    "test": "c8 node bin/mt.mjs dist",
     "format": "prettier --check lib bin",
     "format:fix": "prettier --write lib bin",
     "lint": "eslint --cache lib",
