@@ -87,11 +87,106 @@ export class Test {
   }
 }
 
+/**
+ * Register a test which will be run when `mt` is used on the command line and
+ * the containing module is a test module. `fn` can be async if required.
+ *
+ * ## Example:
+ *
+ * ```ts
+ * import { test } from "@sondr3/minitest";
+ * import { strict as assert } from "node:assert";
+ *
+ * test(() => {
+ *   assert(true === true, "Phew");
+ * });
+ * ```
+ */
 export function test(fn: TestFn): Test;
+
+/**
+ * Register a test which will be run when `mt` is used on the command line and
+ * the containing module is a test module. `fn` can be async if required.
+ *
+ * ## Example:
+ *
+ * ```ts
+ * import { test } from "@sondr3/minitest";
+ * import { strict as assert } from "node:assert";
+ *
+ * test({ name: "example test", fn: () => {
+ *   assert(true === true, "Phew");
+ * }});
+ * ```
+ */
 export function test(t: TestDefinition): Test;
+
+/**
+ * Register a test which will be run when `mt` is used on the command line and
+ * the containing module is a test module. `fn` can be async if required.
+ *
+ * ## Example:
+ *
+ * ```ts
+ * import { test } from "@sondr3/minitest";
+ * import { strict as assert } from "node:assert";
+ *
+ * test({ name: "example test" }, () => {
+ *   assert(true === true, "Phew");
+ * });
+ * ```
+ */
 export function test(opts: TestNoFn, fn: TestFn): Test;
+
+/**
+ * Register a test which will be run when `mt` is used on the command line and
+ * the containing module is a test module. `fn` can be async if required.
+ *
+ * ## Example:
+ *
+ * ```ts
+ * import { test } from "@sondr3/minitest";
+ * import { strict as assert } from "node:assert";
+ *
+ * test("example test", () => {
+ *   assert(true === true, "Phew");
+ * });
+ * ```
+ */
 export function test(name: string, fn: TestFn): Test;
+
+/**
+ * Register a test which will be run when `mt` is used on the command line and
+ * the containing module is a test module. `fn` can be async if required.
+ *
+ * ## Example:
+ *
+ * ```ts
+ * import { test } from "@sondr3/minitest";
+ * import { strict as assert } from "node:assert";
+ *
+ * test("example test", () => {
+ *   assert(true === true, "Phew");
+ * }, { ignore: true });
+ * ```
+ */
 export function test(name: string, fn: TestFn, options?: TestOptions): Test;
+
+/**
+ * Register a test which will be run when `mt` is used on the command line and
+ * the containing module is a test module. `fn` can be async if required.
+ *
+ * ## Example:
+ *
+ * ```ts
+ * import { test } from "@sondr3/minitest";
+ * import { strict as assert } from "node:assert";
+ *
+ * test("example test", () => {
+ *   assert(true === true, "Phew");
+ * });
+ * ```
+ */
 export function test(fnNameOrOpts: TestDefinition | TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions): Test {
   return new Test(fnNameOrOpts, fn, opts);
 }
