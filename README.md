@@ -5,12 +5,12 @@
 </p>
 
 <p align="center">
-    <b>A low-feature and performant test runner inspired by Rust and Deno</b>
+    <b>A low-feature, dependency-free and performant test runner inspired by Rust and Deno</b>
 </p>
 
 - **Simplicity**: Use the `mt` test runner with the `test` function, nothing more.
-- **Performance**: By doing less we can run more quick.
-- **Minimal**: Bring your own assertions, snapshots, `mt` will never be more than it is.
+- **Performance**: By doing and including less we can run more quick.
+- **Minimal**: Bring your own assertions, snapshots, `mt` will always be dependency free.
 
 <details>
 <summary>Table of Contents</summary>
@@ -27,6 +27,10 @@
   - [Failing fast](#failing-fast)
   - [Quiet](#quiet)
   - [CLI](#cli)
+- [Extras](#extras)
+  - [TypeScript](#typescript)
+  - [JSX, TSX, browsers](#jsx-tsx-browsers)
+- [Rationale](#rationale)
 - [License](#license)
 </details>
 
@@ -92,6 +96,10 @@ test({ name: "hello world #2" }, () => {
   assert.equal(x, 3);
 });
 ```
+
+You can use any assertion library you want, like [Chai][chai] for a TDD/BDD
+like assertions and [Sinon.JS][sinon] to spy and mock functionality. The only
+requirement is that the assertions throw when they fail.
 
 ### Async functions
 
@@ -225,6 +233,38 @@ OPTIONS:
         -h, --help               Print help
 ```
 
+# Extras
+
+## TypeScript
+
+There is no built-in support for natively running TypeScript files, they need to
+be compiled to JavaScript first. In other words, your build step needs to happen
+before you run your tests.
+
+## JSX, TSX, browsers
+
+Like with TypeScript, there is no built-in support for usage with JSX and/or TSX,
+and no specific functionality for working against browsers. You may be able to make
+it work, but it is purpose built around testing with Node, so YMMV.
+
+# Rationale
+
+Why would you use this over the myriad of other test frameworks, runners and libraries
+that exist? You probably shouldn't, [Jest][jest], [Ava][ava], [tape][tape], [uvu][uvu] and
+a whole lot of others are more mature, stable, feature rich and has a wider userbase, but
+if you want a simple Rust/Deno like test framework, this might just scratch your itch.
+
+I also created this as an exercise in learning how testing works under the hood, and had
+a lot of fun building it out into a actual useful package. For my needs and packages `minitest`
+is just what I want from a test framework: minimal fuzzing, fast and easy and straight forward.
+
 # License
 
 MIT.
+
+[jest]: https://jestjs.io/
+[ava]: https://github.com/avajs/ava
+[tape]: https://github.com/substack/tape
+[uvu]: https://github.com/lukeed/uvu
+[chai]: https://www.npmjs.com/package/chai
+[sinon]: https://www.npmjs.com/package/sinon

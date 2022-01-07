@@ -4,7 +4,7 @@
   "engines": {
     "node": ">=16"
   },
-  "description": "A very small test runner",
+  "description": "A low-feature, dependency-free and performant test runner inspired by Rust and Deno",
   "type": "module",
   "bin": {
     "mt": "bin/mt.mjs"
@@ -31,7 +31,17 @@
     "url": "git+ssh://git@github.com/sondr3/minitest.git"
   },
   "keywords": [
-    "test"
+    "test",
+    "runner",
+    "testing",
+    "fast",
+    "tdd",
+    "unit",
+    "ava",
+    "jest",
+    "tap",
+    "tape",
+    "uvu"
   ],
   "author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
   "license": "MIT",
