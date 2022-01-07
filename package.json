@@ -15,7 +15,8 @@
     "bin/**/*",
     "dist/**/*.js",
     "dist/**/*.d.ts",
-    "lib/**/*.ts"
+    "lib/**/*.ts",
+    "*.md"
   ],
   "scripts": {
     "dev": "tsc --watch --incremental",
