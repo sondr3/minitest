@@ -134,7 +134,9 @@ class Runner {
 
     for (const [file, xs] of this.tests.entries()) {
       if (!this.quiet) {
-        process.stdout.write(`running ${xs.length} ${xs.length === 1 ? "test" : "tests"} in ${file}\n`);
+        process.stdout.write(
+          `running ${xs.length} ${xs.length === 1 ? "test" : "tests"} in ${file}\n`,
+        );
       }
 
       for (const test of xs) {
@@ -164,10 +166,12 @@ class Runner {
   }
 
   private filterTests() {
-    const filtered: Array<[string, Array<TestRunner>]> = Array.from(this.tests.entries()).flatMap(([file, xs]) => {
-      const filtered = xs.filter((t) => this.filterFn(t.name));
-      return filtered.length > 0 ? [[file, filtered]] : [];
-    });
+    const filtered: Array<[string, Array<TestRunner>]> = Array.from(this.tests.entries()).flatMap(
+      ([file, xs]) => {
+        const filtered = xs.filter((t) => this.filterFn(t.name));
+        return filtered.length > 0 ? [[file, filtered]] : [];
+      },
+    );
     const tests: Map<string, Array<TestRunner>> = new Map(filtered);
     this.filtered = mapSize(this.tests) - mapSize(tests);
     this.tests = tests;

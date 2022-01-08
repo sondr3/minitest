@@ -11,7 +11,14 @@ const walkDirToArray = async (dir: string): Promise<string[]> => {
 };
 
 test("testFile() correctly matches", () => {
-  const testFiles = ["test.js", "test.mjs", "cli.test.js", "cli.test.mjs", "cli_test.js", "cli_test.mjs"];
+  const testFiles = [
+    "test.js",
+    "test.mjs",
+    "cli.test.js",
+    "cli.test.mjs",
+    "cli_test.js",
+    "cli_test.mjs",
+  ];
   testFiles.forEach((f) => assert(testFile(f), `${f} should be a valid test file`));
 });
 

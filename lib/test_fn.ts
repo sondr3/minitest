@@ -24,7 +24,11 @@ export class Test {
   private _ignore = false;
   private _only = false;
 
-  constructor(fnNameOrOpts: TestDefinition | TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions) {
+  constructor(
+    fnNameOrOpts: TestDefinition | TestFn | TestNoFn | string,
+    fn?: TestFn,
+    opts?: TestOptions,
+  ) {
     if (typeof fnNameOrOpts === "function") {
       const name = fnNameOrOpts.name === "" ? "unnamed" : fnNameOrOpts.name;
       this.name = name;
@@ -187,6 +191,10 @@ export function test(name: string, fn: TestFn, options?: TestOptions): Test;
  * });
  * ```
  */
-export function test(fnNameOrOpts: TestDefinition | TestFn | TestNoFn | string, fn?: TestFn, opts?: TestOptions): Test {
+export function test(
+  fnNameOrOpts: TestDefinition | TestFn | TestNoFn | string,
+  fn?: TestFn,
+  opts?: TestOptions,
+): Test {
   return new Test(fnNameOrOpts, fn, opts);
 }
