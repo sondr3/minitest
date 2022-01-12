@@ -1,3 +1,12 @@
+## v0.1.1
+
+> 2022-01-12
+
+### Commits
+
+- [[`e532ab0`](https://github.com/sondr3/minitest.git)] Set NODE_ENV to 'test' in runner
+- [[`0801c34`](https://github.com/sondr3/minitest.git)] Update @sondr3/prettier, fix formatting
+
 ## 0.1.0
 
 > 2022-01-07
