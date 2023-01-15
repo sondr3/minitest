@@ -1,8 +1,8 @@
 {
   "name": "@sondr3/minitest",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "description": "A low-feature, dependency-free and performant test runner inspired by Rust and Deno",
   "type": "module",
