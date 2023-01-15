@@ -1,4 +1,5 @@
 ## v0.1.2
+
 > 2023-01-15
 
 ## Summary
@@ -6,9 +7,9 @@
 Package updates, nothing major.
 
 ### Commits
+
 - [[`1ff5085`](https://github.com/sondr3/minitest)] Update CI, add release job
 - [[`c0f10e5`](https://github.com/sondr3/minitest)] Upgrade packages
-
 
 ## v0.1.1
 

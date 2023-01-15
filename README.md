@@ -1,7 +1,7 @@
 <h1 align="center">minitest</h1>
 <p align="center">
     <a href="https://github.com/sondr3/minitest/actions"><img alt="GitHub Actions Status" src="https://github.com/sondr3/minitest/workflows/pipeline/badge.svg" /></a>
-    <a href="https://www.npmjs.com/package/@sondr3/minitest"><img alt="NPM" src="https://badge.fury.io/js/%40sondr3%2Fminitest.svg" /></a>
+    <a href="https://www.npmjs.com/package/@sondr3/minitest"><img alt="NPM" src="https://img.shields.io/npm/v/@sondr3/minitest" /></a>
 </p>
 
 <p align="center">
