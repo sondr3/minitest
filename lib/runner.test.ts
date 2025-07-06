@@ -26,7 +26,7 @@ test("ignoreDir()", () => {
 });
 
 test("walkDir()", async () => {
-	const files = await walkDirToArray(process.cwd() + "/dist");
+	const files = await walkDirToArray(`${process.cwd()}/dist`);
 	assert(files.some((f) => basename(f) === "cli.test.js"));
 	assert(files.some((f) => basename(f) === "test.test.js"));
 	assert(files.some((f) => basename(f) === "examples_test.js"));

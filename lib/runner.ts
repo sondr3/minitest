@@ -4,8 +4,8 @@ import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 
 import { parseCli, printVersionHelp } from "./cli.js";
-import { Test } from "./test_fn.js";
-import { TestRunner } from "./test_runner.js";
+import type { Test } from "./test_fn.js";
+import type { TestRunner } from "./test_runner.js";
 import { color, mapSize } from "./utils.js";
 
 export const TESTS: Array<Test> = [];
@@ -31,7 +31,7 @@ export async function* walkDir(dir: string): AsyncGenerator<string> {
 
 class Runner {
 	private readonly quiet;
-	private readonly failFast?: number;
+	private readonly failFast: number | undefined;
 	private readonly filterFn!: (name: string) => boolean;
 	private readonly filter: boolean = false;
 	private failures: Array<[string, Error | undefined]> = [];
@@ -42,7 +42,7 @@ class Runner {
 	private ignored = 0;
 	private filtered = 0;
 
-	constructor(quiet: boolean, failFast?: number, filter?: (name: string) => boolean) {
+	constructor(quiet: boolean, failFast: number | undefined, filter?: (name: string) => boolean) {
 		this.quiet = quiet;
 		this.failFast = failFast;
 

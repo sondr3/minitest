@@ -5,8 +5,8 @@ export interface CliOptions {
 	help: boolean;
 	version: boolean;
 	quiet: boolean;
-	failFast?: number;
-	filter?: (name: string) => boolean;
+	failFast: number | undefined;
+	filter: ((name: string) => boolean) | undefined;
 }
 
 export const defaultOptions: CliOptions = {
@@ -46,7 +46,7 @@ export const printVersionHelp = (version: boolean, help: boolean) => {
 };
 
 export const parseOptions = (args: Array<string>, options: CliOptions): CliOptions => {
-	if (args.length === 0) return options;
+	if (args.length === 0 || !args[0]) return options;
 
 	if (args[0].startsWith("-")) {
 		switch (args[0]) {
@@ -71,7 +71,7 @@ export const parseOptions = (args: Array<string>, options: CliOptions): CliOptio
 				}
 
 				const val = Number(args[index + 1]);
-				if (isNaN(val) || val === 0) {
+				if (Number.isNaN(val) || val === 0) {
 					options.failFast = 0;
 					return parseOptions(args.slice(1), options);
 				} else {
@@ -87,10 +87,10 @@ export const parseOptions = (args: Array<string>, options: CliOptions): CliOptio
 				}
 
 				const filter = args[index + 1];
-				if (filter.startsWith("/") && filter.endsWith("/")) {
+				if (filter?.startsWith("/") && filter?.endsWith("/")) {
 					const regex = new RegExp(filter.slice(1, filter.length - 1));
 					options.filter = (name: string) => regex.test(name);
-				} else {
+				} else if (filter) {
 					options.filter = (name: string) => name.toLowerCase().includes(filter.toLowerCase());
 				}
 				return parseOptions(args.slice(2), options);

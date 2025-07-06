@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 
-import { CliOptions, parseCli, parseOptions } from "./cli.js";
+import { type CliOptions, parseCli, parseOptions } from "./cli.js";
 import { test } from "./index.js";
 
 const testOptions: CliOptions = {

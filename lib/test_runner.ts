@@ -1,4 +1,4 @@
-import { TestFn } from "./test_fn.js";
+import type { TestFn } from "./test_fn.js";
 import { color } from "./utils.js";
 
 export class TestRunner {
@@ -7,7 +7,7 @@ export class TestRunner {
 	readonly ignore: boolean = false;
 	readonly only: boolean = false;
 	success = false;
-	error?: Error = undefined;
+	error: Error | undefined = undefined;
 
 	constructor(name: string, fn: TestFn, ignore: boolean, only: boolean) {
 		this.name = name;

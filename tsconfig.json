@@ -1,8 +1,13 @@
 {
-	"extends": "@sondr3/tsconfig",
+	"extends": [
+		"@tsconfig/node-lts/tsconfig.json",
+		"@tsconfig/node-ts/tsconfig.json",
+		"@tsconfig/recommended/tsconfig.json",
+		"@tsconfig/strictest/tsconfig.json"
+	],
 	"compilerOptions": {
+		"module": "NodeNext",
 		"allowJs": true,
-		"lib": ["ES2021"],
 		"incremental": true,
 		"declaration": true,
 		"declarationMap": true,
