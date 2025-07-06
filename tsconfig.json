@@ -1,14 +1,14 @@
 {
-  "extends": "@sondr3/tsconfig",
-  "compilerOptions": {
-    "allowJs": true,
-    "lib": ["ES2021"],
-    "incremental": true,
-    "declaration": true,
-    "declarationMap": true,
-    "stripInternal": true,
-    "outDir": "dist"
-  },
-  "include": ["lib"],
-  "exclude": ["coverage", "node_modules", "dist"]
+	"extends": "@sondr3/tsconfig",
+	"compilerOptions": {
+		"allowJs": true,
+		"lib": ["ES2021"],
+		"incremental": true,
+		"declaration": true,
+		"declarationMap": true,
+		"stripInternal": true,
+		"outDir": "dist"
+	},
+	"include": ["lib"],
+	"exclude": ["coverage", "node_modules", "dist"]
 }
