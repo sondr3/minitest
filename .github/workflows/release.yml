@@ -40,5 +40,6 @@ jobs:
 
       # the trusted publisher only accepts staged publishes, approve the release
       # under "Staged Packages" on npmjs.com
+      # TODO: drop `--tag next` for the final v1.0.0 release
       - name: Stage publish
-        run: pnpm stage publish --no-git-checks --provenance --access public
+        run: pnpm stage publish --no-git-checks --provenance --access public --tag next
