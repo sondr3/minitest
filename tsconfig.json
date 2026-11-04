@@ -1,18 +1,17 @@
 {
 	"extends": [
-		"@tsconfig/node-lts/tsconfig.json",
-		"@tsconfig/node-ts/tsconfig.json",
-		"@tsconfig/recommended/tsconfig.json",
-		"@tsconfig/strictest/tsconfig.json"
+		"@sondr3/tsconfig/tsconfig.base.json",
+		"@sondr3/tsconfig/tsconfig.lib.json",
+		"@sondr3/tsconfig/tsconfig.node.json"
 	],
 	"compilerOptions": {
-		"module": "NodeNext",
+		"types": ["node"],
 		"allowJs": true,
-		"incremental": true,
-		"declaration": true,
-		"declarationMap": true,
+		"isolatedDeclarations": false,
 		"stripInternal": true,
-		"outDir": "dist"
+		"rootDir": "lib",
+		"outDir": "dist",
+		"tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo"
 	},
 	"include": ["lib"],
 	"exclude": ["coverage", "node_modules", "dist"]
