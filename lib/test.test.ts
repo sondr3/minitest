@@ -94,8 +94,8 @@ test("object without fn throws", () => {
 test("object with two fn throws", () => {
 	assert.throws(
 		() => {
-			// @ts-ignore
 			test(
+				// @ts-expect-error: intentionally passing both an object with `fn` and a function
 				{
 					name: "oh no",
 					fn: () => {
