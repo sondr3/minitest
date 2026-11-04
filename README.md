@@ -254,7 +254,7 @@ before you run your tests.
 
 ## Coverage
 
-To generate coverate reporting for your tests, I highly recommend using [c8][c8]. It
+To generate coverage reporting for your tests, I highly recommend using [c8][c8]. It
 generates coverage based on the built-in coverage functionality of NodeJS and will
 just magically work with your tests. It is also very fast compared to similar
 functionality in other testing libraries. To generate coverage by default, change

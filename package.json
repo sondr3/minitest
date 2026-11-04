@@ -20,7 +20,7 @@
 		"url": "https://github.com/sondr3/minitest/issues"
 	},
 	"license": "MIT",
-	"author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
+	"author": "Sondre Aasemoen <sondre@eons.io> (https://www.eons.io)",
 	"repository": {
 		"type": "git",
 		"url": "git+ssh://git@github.com/sondr3/minitest.git"
@@ -33,12 +33,23 @@
 		"dist/**/*.js",
 		"dist/**/*.d.ts",
 		"dist/**/*.map",
+		"!dist/**/*.test.*",
+		"!dist/tests",
 		"lib/**/*.ts",
+		"!lib/**/*.test.ts",
+		"!lib/tests",
 		"*.md"
 	],
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./package.json": "./package.json"
+	},
 	"scripts": {
 		"dev": "tsc --watch --incremental",
 		"build": "tsc",

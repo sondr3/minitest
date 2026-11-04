@@ -12,8 +12,7 @@ test("mapSize()", () => {
 			]),
 			2,
 		],
-		// because ESLint has terrible type inference >:(
-		[new Map() as Map<string, Array<number>>, 0],
+		[new Map(), 0],
 	]
 
 	for (const [map, size] of maps) assert.equal(mapSize(map), size)
