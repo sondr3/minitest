@@ -1,6 +1,6 @@
 {
 	"name": "@sondr3/minitest",
-	"version": "0.1.2",
+	"version": "1.0.0-rc.1",
 	"description": "A low-feature, dependency-free and performant test runner inspired by Rust and Deno",
 	"keywords": [
 		"ava",
