@@ -33,6 +33,7 @@
   - [JSX, TSX, browsers](#jsx-tsx-browsers)
 - [Rationale](#rationale)
 - [License](#license)
+
 </details>
 
 # Quickstart
@@ -49,12 +50,13 @@
 3. Write your tests:
 
    ```js
-   import { strict as assert } from "assert";
-   import { test } from "@sondr3/minitest";
+   import { strict as assert } from "assert"
+
+   import { test } from "@sondr3/minitest"
 
    test("it works!", () => {
-     assert(true === true, "Phew");
-   });
+   	assert(true === true, "Phew")
+   })
    ```
 
 4. Run your tests: `pnpm test`
@@ -84,18 +86,19 @@ are a couple of different styles that can be used to write tests, but we'll get
 into these later.
 
 ```js
-import { test } from "@sondr3/minitest";
-import { strict as assert } from "node:assert";
+import { strict as assert } from "node:assert"
+
+import { test } from "@sondr3/minitest"
 
 test("hello world #1", () => {
-  const x = 1 + 2;
-  assert.equal(x, 3);
-});
+	const x = 1 + 2
+	assert.equal(x, 3)
+})
 
 test({ name: "hello world #2" }, () => {
-  const x = 1 + 2;
-  assert.equal(x, 3);
-});
+	const x = 1 + 2
+	assert.equal(x, 3)
+})
 ```
 
 You can use any assertion library you want, like [Chai][chai] for a TDD/BDD
@@ -114,15 +117,16 @@ You can also test asynchronous code by turning the test function into a function
 that returns a promise. Simply add `async` in front of the function:
 
 ```js
-import { test } from "@sondr3/minitest";
-import { strict as assert } from "node:assert";
+import { strict as assert } from "node:assert"
+
+import { test } from "@sondr3/minitest"
 
 test("async hello world", async () => {
-  const x = 1 + 2;
-  const wait = async () => new Promise((res) => setTimeout(res, 1000));
-  await wait();
-  assert.equal(x, 3);
-});
+	const x = 1 + 2
+	const wait = async () => new Promise((res) => setTimeout(res, 1000))
+	await wait()
+	assert.equal(x, 3)
+})
 ```
 
 ## Running tests
@@ -154,9 +158,9 @@ either a case insensitive string or a Regex pattern as its value.
 If you have the following tests:
 
 ```js
-test("a-test", () => {});
-test("test-1", () => {});
-test("test-2", () => {});
+test("a-test", () => {})
+test("test-1", () => {})
+test("test-2", () => {})
 ```
 
 You can then filter them by filtering all tests that contain the word `test`:
@@ -178,9 +182,9 @@ are currently incorrect you can use the `ignore()` method or the `ignore` field
 in the options:
 
 ```js
-test("ignored", () => {}).ignore(); // or .ignore(condition)
-test({ name: "other ignored", ignore: process.arch === "x64" }, () => {});
-test("final ignored", () => {}, { ignore: true });
+test("ignored", () => {}).ignore() // or .ignore(condition)
+test({ name: "other ignored", ignore: process.arch === "x64" }, () => {})
+test("final ignored", () => {}, { ignore: true })
 ```
 
 ### Running specific tests
@@ -193,9 +197,9 @@ failure normally, the whole test suite will still fail as using `only` should on
 be a temporary measure as it disables nearly the whole test suite.
 
 ```js
-test("other ignored", () => {}).only();
-test({ name: "ignored", only: true }, () => {});
-test("final ignored", () => {}, { only: true });
+test("other ignored", () => {}).only()
+test({ name: "ignored", only: true }, () => {})
+test("final ignored", () => {}, { only: true })
 ```
 
 ## Failing fast

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-import { run } from "../dist/runner.js";
+import { run } from "../dist/runner.js"
 
-process.env.NODE_ENV = "test";
+process.env.NODE_ENV = "test"
 
-run(process.argv);
+// unhandled rejections crash the process with a stack trace, which is what we want
+// oxlint-disable-next-line typescript/no-floating-promises
+run(process.argv)
