@@ -1,6 +1,13 @@
 name: pipeline
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   pipeline:
@@ -13,6 +20,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: pnpm/action-setup@v6.1.1
       - uses: actions/setup-node@v7.1.0
         with:
@@ -30,32 +39,3 @@ jobs:
 
       - name: Test
         run: pnpm test
-
-  publish:
-    if: startsWith(github.ref, 'refs/tags/v')
-    name: publish
-    needs: pipeline
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-
-      - uses: pnpm/action-setup@v6.1.1
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: latest
-          cache: "pnpm"
-          registry-url: "https://registry.npmjs.org"
-
-      - name: Install and build
-        run: pnpm install --frozen-lockfile
-
-      - name: Build
-        run: pnpm build
-
-      - name: Publish
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: pnpm publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
