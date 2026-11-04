@@ -1,3 +1,29 @@
+## v1.0.0
+
+> 2026-11-04
+
+## Summary
+
+Only internal package upgrades, CI and tooling upgrades and a 1.0.0 release to
+denote that this package has been unchanged and stable for ~4 years... might as
+well bump to v1. Thanks to @ijlee2 for the bump.
+
+### Relevant commits
+
+- [[`54d5381`](https://github.com/sondr3/minitest/commit/54d5381)] Add new release pipeline
+- [[`2d0b9ad`](https://github.com/sondr3/minitest/commit/2d0b9ad)] Update what's exported and how
+- [[`b6ecc7f`](https://github.com/sondr3/minitest/commit/b6ecc7f)] Add CI lockfile
+- [[`08ae027`](https://github.com/sondr3/minitest/commit/08ae027)] Bump all dependencies and CI
+- [[`71d456f`](https://github.com/sondr3/minitest/commit/71d456f)] Use my own tsconfig
+- [[`591e5ea`](https://github.com/sondr3/minitest/commit/591e5ea)] Fix backwards USE_COLOR
+- [[`7e593e8`](https://github.com/sondr3/minitest/commit/7e593e8)] Move to oxlint and oxfmt
+- [[`9f77306`](https://github.com/sondr3/minitest/commit/9f77306)] Override yarn to fix c8 temporarily
+- [[`ce7bde1`](https://github.com/sondr3/minitest/commit/ce7bde1)] Use correct syntax for lts node in CI
+- [[`05cdc03`](https://github.com/sondr3/minitest/commit/05cdc03)] Update to @tsconfig configs, fix lints and warnings
+- [[`8d547e6`](https://github.com/sondr3/minitest/commit/8d547e6)] Update node versions in CI, pin pnpm in package.json
+- [[`b9178fa`](https://github.com/sondr3/minitest/commit/b9178fa)] Migrate to Biome and Oxlint
+- [[`99dacb5`](https://github.com/sondr3/minitest/commit/99dacb5)] Format changelog, use Shields.IO for version badge [ci skip]
+
 ## v0.1.2
 
 > 2023-01-15
