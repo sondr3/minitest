@@ -5,6 +5,7 @@
 		"@sondr3/tsconfig/tsconfig.node.json"
 	],
 	"compilerOptions": {
+		"types": ["node"],
 		"allowJs": true,
 		"isolatedDeclarations": false,
 		"stripInternal": true,
