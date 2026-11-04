@@ -1,7 +1,7 @@
-import { strict as assert } from "node:assert";
+import { strict as assert } from "node:assert"
 
-import { test } from "./index.js";
-import { mapSize } from "./utils.js";
+import { test } from "./index.js"
+import { mapSize } from "./utils.js"
 
 test("mapSize()", () => {
 	const maps: Array<[Map<string, Array<number>>, number]> = [
@@ -14,7 +14,7 @@ test("mapSize()", () => {
 		],
 		// because ESLint has terrible type inference >:(
 		[new Map() as Map<string, Array<number>>, 0],
-	];
+	]
 
-	maps.forEach(([map, size]) => assert.equal(mapSize(map), size));
-});
+	for (const [map, size] of maps) assert.equal(mapSize(map), size)
+})

@@ -12,6 +12,7 @@
 		"declaration": true,
 		"declarationMap": true,
 		"stripInternal": true,
+		"rootDir": "lib",
 		"outDir": "dist"
 	},
 	"include": ["lib"],
