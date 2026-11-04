@@ -17,18 +17,9 @@ importers:
       '@sondr3/oxlint':
         specifier: 0.1.1
         version: 0.1.1(oxlint-tsgolint@7.0.2005)(oxlint@1.91.0(oxlint-tsgolint@7.0.2005))
-      '@tsconfig/node-lts':
-        specifier: 22.0.2
-        version: 22.0.2
-      '@tsconfig/node-ts':
-        specifier: 23.6.1
-        version: 23.6.1
-      '@tsconfig/recommended':
-        specifier: 1.0.10
-        version: 1.0.10
-      '@tsconfig/strictest':
-        specifier: 2.0.5
-        version: 2.0.5
+      '@sondr3/tsconfig':
+        specifier: 0.10.0
+        version: 0.10.0(typescript@5.8.3)
       '@types/node':
         specifier: 24.0.10
         version: 24.0.10
@@ -345,17 +336,10 @@ packages:
       oxlint: '>= 1'
       oxlint-tsgolint: '>= 0.20.0'
 
-  '@tsconfig/node-lts@22.0.2':
-    resolution: {integrity: sha512-Kgq5yXTvnUnvlhob0xJpOH4na9PWtuFhHSf94MpDwnENWgiFeJKDNANQV2MT1WpXZYkK2WSWfVYKhVkR7bc8TA==}
-
-  '@tsconfig/node-ts@23.6.1':
-    resolution: {integrity: sha512-1E5cUp+S65pLKKI9VrGMQPWDHxOEq3dAGM2onG3fLeSRwWbylYFwhIjnzJikjSN7w2nCgwxmv8ifvUKDFkK38Q==}
-
-  '@tsconfig/recommended@1.0.10':
-    resolution: {integrity: sha512-cGvydvg03lONp5Z9yaplW493Vw9/um7k588mvDkm+VFPF2PZUVPx0uswq4PFpeEySsLbQRETrDRhzh4Dmxaslw==}
-
-  '@tsconfig/strictest@2.0.5':
-    resolution: {integrity: sha512-ec4tjL2Rr0pkZ5hww65c+EEPYwxOi4Ryv+0MtjeaSQRJyq322Q27eOQiFbuNgw2hpL4hB1/W/HBGk3VKS43osg==}
+  '@sondr3/tsconfig@0.10.0':
+    resolution: {integrity: sha512-ckiQVq0utV9cpNpXrYdJ+PDKi89SP9eiPVLdVQL96rbc1e6k47WTU5Fdqj5tfCCJ7XFowkLQgqqEHhgmAStMQw==}
+    peerDependencies:
+      typescript: '>= 5'
 
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
@@ -819,13 +803,9 @@ snapshots:
       oxlint: 1.91.0(oxlint-tsgolint@7.0.2005)
       oxlint-tsgolint: 7.0.2005
 
-  '@tsconfig/node-lts@22.0.2': {}
-
-  '@tsconfig/node-ts@23.6.1': {}
-
-  '@tsconfig/recommended@1.0.10': {}
-
-  '@tsconfig/strictest@2.0.5': {}
+  '@sondr3/tsconfig@0.10.0(typescript@5.8.3)':
+    dependencies:
+      typescript: 5.8.3
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 
