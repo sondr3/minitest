@@ -1,6 +1,3 @@
-// Disable this rule for this file to test erroneous usage of `test`
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { strict as assert } from "node:assert"
 
 import { test } from "./index.js"

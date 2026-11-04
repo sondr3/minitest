@@ -171,6 +171,27 @@ class Runner {
 	}
 }
 
+/**
+ * Run the test runner, exactly like the `mt` binary does. Useful for creating
+ * your own runner script.
+ *
+ * `argv` is expected to be shaped like `process.argv`: the first two entries
+ * (the node executable and script path) are skipped, and the rest are parsed
+ * as `mt` arguments.
+ *
+ * Note that this calls `process.exit(1)` if any tests fail or tests are marked
+ * with `only`, and `process.exit(0)` after printing `--help` or `--version`.
+ * The `mt` binary also sets `process.env.NODE_ENV = "test"` before calling this.
+ *
+ * ## Example:
+ *
+ * ```ts
+ * import { run } from "@sondr3/minitest"
+ *
+ * process.env.NODE_ENV = "test"
+ * await run(["node", "my-runner", "dist", "--quiet"])
+ * ```
+ */
 export async function run(argv: Array<string>): Promise<void> {
 	const { dir, quiet, filter, failFast, version, help } = parseCli(argv)
 
