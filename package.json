@@ -1,16 +1,33 @@
 {
 	"name": "@sondr3/minitest",
 	"version": "0.1.2",
-	"engines": {
-		"node": ">=18"
-	},
 	"description": "A low-feature, dependency-free and performant test runner inspired by Rust and Deno",
-	"type": "module",
+	"keywords": [
+		"ava",
+		"fast",
+		"jest",
+		"runner",
+		"tap",
+		"tape",
+		"tdd",
+		"test",
+		"testing",
+		"unit",
+		"uvu"
+	],
+	"homepage": "https://github.com/sondr3/minitest#readme",
+	"bugs": {
+		"url": "https://github.com/sondr3/minitest/issues"
+	},
+	"license": "MIT",
+	"author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/sondr3/minitest.git"
+	},
 	"bin": {
 		"mt": "bin/mt.mjs"
 	},
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
 	"files": [
 		"bin/**/*",
 		"dist/**/*.js",
@@ -18,52 +35,33 @@
 		"lib/**/*.ts",
 		"*.md"
 	],
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"scripts": {
 		"dev": "tsc --watch --incremental",
 		"build": "tsc",
 		"test": "c8 node bin/mt.mjs dist",
-		"format": "biome check --write",
+		"format": "oxfmt",
 		"lint": "oxlint --fix",
-		"check": "biome check && oxlint"
+		"check": "oxfmt --check && oxlint"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://git@github.com/sondr3/minitest.git"
-	},
-	"keywords": [
-		"test",
-		"runner",
-		"testing",
-		"fast",
-		"tdd",
-		"unit",
-		"ava",
-		"jest",
-		"tap",
-		"tape",
-		"uvu"
-	],
-	"author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/sondr3/minitest/issues"
-	},
-	"homepage": "https://github.com/sondr3/minitest#readme",
 	"devDependencies": {
-		"@biomejs/biome": "2.0.6",
+		"@sondr3/oxfmt": "0.1.2",
+		"@sondr3/oxlint": "0.1.1",
 		"@tsconfig/node-lts": "22.0.2",
 		"@tsconfig/node-ts": "23.6.1",
 		"@tsconfig/recommended": "1.0.10",
 		"@tsconfig/strictest": "2.0.5",
 		"@types/node": "24.0.10",
 		"c8": "10.1.3",
-		"oxlint": "1.5.0",
+		"oxfmt": "0.76.0",
+		"oxlint": "1.91.0",
+		"oxlint-tsgolint": "7.0.2005",
 		"typescript": "5.8.3"
 	},
-	"pnpm": {
-		"overrides": {
-			"yargs": "18.0.0"
-		}
+	"engines": {
+		"node": ">=18"
 	},
 	"packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
 }
